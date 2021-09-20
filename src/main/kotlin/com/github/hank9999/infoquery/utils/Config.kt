@@ -16,8 +16,6 @@ import kotlin.system.exitProcess
 class Config {
 
     object Bot {
-        var client_id: String? = null
-        var client_secret: String? = null
         var token: String? = null
         var id: String? = null
     }
@@ -48,13 +46,7 @@ class Config {
         }
 
         private fun checkBotConfig(): Boolean {
-            if (Bot.client_id == null || Bot.client_id!!.isEmpty()) {
-                logger.error("配置文件错误: bot.client_id 不存在或为空")
-                return false
-            } else if (Bot.client_secret == null || Bot.client_secret!!.isEmpty()) {
-                logger.error("配置文件错误: bot.client_secret 不存在或为空")
-                return false
-            } else if (Bot.token == null || Bot.token!!.isEmpty()) {
+            if (Bot.token == null || Bot.token!!.isEmpty()) {
                 logger.error("配置文件错误: bot.token 不存在或为空")
                 return false
             } else if (Bot.id == null || Bot.id!!.isEmpty()) {
@@ -85,8 +77,6 @@ class Config {
                 exitProcess(1)
             }
 
-            Bot.client_id = root.node("bot", "client_id").string
-            Bot.client_secret = root.node("bot", "client_secret").string
             Bot.token = root.node("bot", "token").string
             Bot.id = root.node("bot", "id").string
         }
