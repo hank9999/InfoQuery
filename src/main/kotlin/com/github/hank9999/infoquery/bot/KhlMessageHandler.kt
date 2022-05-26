@@ -40,10 +40,10 @@ class KhlMessageHandler {
                     }
                     newMessage = newMessage.dropLast(2) + "\n"
                 }
-                newMessage += "消息内容: $content\n"
+                newMessage += "消息内容: $content"
                 if (data.extra.quote != Quote()) {
                     val quote = data.extra.quote
-                    newMessage += "引用消息ID: ${quote.rong_id}\n"
+                    newMessage += "\n引用消息ID: ${quote.rong_id}\n"
                     newMessage += "引用消息发送者: ${quote.author.username}#${quote.author.identify_num}\n"
                     newMessage += "引用消息类型: ${quote.type}\n"
                     newMessage += "引用消息内容: ${quote.content}"
