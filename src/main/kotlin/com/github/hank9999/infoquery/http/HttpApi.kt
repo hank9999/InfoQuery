@@ -2,6 +2,7 @@ package com.github.hank9999.infoquery.http
 
 import com.github.hank9999.infoquery.Config
 import com.github.hank9999.infoquery.bot.types.types.MessageTypes
+import com.github.hank9999.infoquery.http.exceptions.HttpException
 import com.github.hank9999.infoquery.json.JSON.Companion.json
 import com.github.hank9999.infoquery.json.JSON.Companion.t
 import com.github.hank9999.infoquery.json.JSON.Operator.get
@@ -31,8 +32,7 @@ class HttpApi {
             val resp = Http.post("$api/message/create", authHeader, formData.build())
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                logger.error("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
-                return json.parseToJsonElement("{}")
+                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
             }
             return respJson["data"]
         }
@@ -43,8 +43,7 @@ class HttpApi {
             val resp = Http.get("$api/user/me", authHeader)
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                logger.error("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
-                return com.github.hank9999.infoquery.bot.types.User()
+                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} user/me ${respJson["message"](t.string)}")
             }
             return json.decodeFromJsonElement(respJson["data"])
         }

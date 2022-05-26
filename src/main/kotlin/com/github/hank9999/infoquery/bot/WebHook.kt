@@ -11,6 +11,7 @@ import com.github.hank9999.infoquery.json.JSON.Operator.get
 import com.github.hank9999.infoquery.json.JSON.Operator.invoke
 import com.github.hank9999.infoquery.bot.types.types.MessageTypes
 import com.github.hank9999.infoquery.bot.types.types.MessageTypes.*
+import com.github.hank9999.infoquery.http.exceptions.HttpException
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -42,15 +43,20 @@ class WebHook {
             return
         }
 
-        // 如果遇到什么奇怪的bug 打印json全文
         try {
             when (MessageTypes.fromInt(dObject["type"](t.int))) {
                 KMD, TEXT, CARD, VIDEO, IMG, AUDIO, FILE -> KhlMessageHandler.messageHandler(dObject)
                 SYS -> khlSystemMessageHandler(ctx, dObject)
             }
+        } catch(e: HttpException) {
+            logger.error("${e.javaClass.name} ${e.message}")
+            ctx.status(200)
         } catch (e: Exception) {
-            e.printStackTrace()
+            // 如果遇到什么奇怪的bug 打印json全文
             logger.error(body)
+            logger.error("${e.javaClass.name} ${e.message}")
+            logger.error(e.stackTrace.toString())
+            ctx.status(200)
         }
     }
 
