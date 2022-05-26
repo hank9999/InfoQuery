@@ -41,9 +41,16 @@ class WebHook {
             logger.warn("[Khl] Wrong Verify Token, message may be fake, ignored")
             return
         }
-        when (MessageTypes.fromInt(dObject["type"](t.int))) {
-            KMD, TEXT, CARD, VIDEO, IMG, AUDIO, FILE -> KhlMessageHandler.messageHandler(dObject)
-            SYS -> khlSystemMessageHandler(ctx, dObject)
+
+        // 如果遇到什么奇怪的bug 打印json全文
+        try {
+            when (MessageTypes.fromInt(dObject["type"](t.int))) {
+                KMD, TEXT, CARD, VIDEO, IMG, AUDIO, FILE -> KhlMessageHandler.messageHandler(dObject)
+                SYS -> khlSystemMessageHandler(ctx, dObject)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logger.error(body)
         }
     }
 
