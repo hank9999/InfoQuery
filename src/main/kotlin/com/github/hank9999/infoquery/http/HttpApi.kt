@@ -31,7 +31,8 @@ class HttpApi {
             val resp = Http.post("$api/message/create", authHeader, formData.build())
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                throw Exception(respJson["message"](t.string))
+                logger.error("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
+                return json.parseToJsonElement("{}")
             }
             return respJson["data"]
         }
@@ -42,7 +43,8 @@ class HttpApi {
             val resp = Http.get("$api/user/me", authHeader)
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                throw Exception(respJson["message"](t.string))
+                logger.error("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
+                return com.github.hank9999.infoquery.bot.types.User()
             }
             return json.decodeFromJsonElement(respJson["data"])
         }
