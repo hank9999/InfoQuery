@@ -1,4 +1,4 @@
-package com.github.hank9999.infoquery.utils
+package com.github.hank9999.infoquery
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,7 +17,10 @@ class Config {
 
     object Bot {
         var token: String? = null
-        var id: String? = null
+        var verify_token: String? = null
+        var host: String? = "localhost"
+        var port: Int? = 3000
+        var path: String? = "/webhook"
     }
 
     companion object {
@@ -49,12 +52,22 @@ class Config {
             if (Bot.token == null || Bot.token!!.isEmpty()) {
                 logger.error("配置文件错误: bot.token 不存在或为空")
                 return false
-            } else if (Bot.id == null || Bot.id!!.isEmpty()) {
-                logger.error("配置文件错误: bot.id 不存在或为空")
+            } else if (Bot.verify_token == null || Bot.verify_token!!.isEmpty()) {
+                logger.error("配置文件错误: bot.verify_token 不存在或为空")
+                return false
+            } else if (Bot.host == null || Bot.host!!.isEmpty()) {
+                logger.error("配置文件错误: bot.host 不存在或为空")
+                return false
+            } else if (Bot.port == null || (Bot.port!! < 0 || Bot.port!! > 65535)) {
+                logger.error("配置文件错误: bot.port 不存在或不合法")
+                return false
+            } else if (Bot.path == null || Bot.path!!.isEmpty()) {
+                logger.error("配置文件错误: bot.path 不存在或为空")
                 return false
             }
             return true
         }
+
 
         fun checkConfig() {
             if (!checkBotConfig()) {
@@ -78,7 +91,10 @@ class Config {
             }
 
             Bot.token = root.node("bot", "token").string
-            Bot.id = root.node("bot", "id").string
+            Bot.verify_token = root.node("bot", "verify_token").string
+            Bot.host = root.node("bot", "host").string
+            Bot.port = root.node("bot", "port").int
+            Bot.path = root.node("bot", "path").string
         }
     }
 
