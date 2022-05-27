@@ -55,7 +55,7 @@ class WebHook {
             // 如果遇到什么奇怪的bug 打印json全文
             logger.error(body)
             logger.error("${e.javaClass.name} ${e.message}")
-            logger.error(e.stackTraceToString())
+            // logger.error(e.stackTraceToString())
             ctx.status(200)
         }
     }
