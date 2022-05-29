@@ -29,7 +29,7 @@ class KhlMessageHandler {
                 if (data.extra.mention.isNotEmpty()) {
                     newMessage += "引用用户: "
                     for (i in data.extra.kmarkdown.mention_part) {
-                        newMessage += ("${i.full_name}, ")
+                        newMessage += ("${i.full_name}(${i.id}), ")
                     }
                     newMessage = newMessage.dropLast(2) + "\n"
                 }
