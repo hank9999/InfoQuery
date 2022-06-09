@@ -20,7 +20,7 @@ class Http {
             }
             val request = builder.build()
             client.newCall(request).execute().use { resp ->
-                return HttpResponse(resp.code, resp.body!!.string())
+                return HttpResponse(resp.code, resp.body!!.string(), resp.headers.toMultimap())
             }
         }
 
@@ -32,9 +32,8 @@ class Http {
             }
             val request = builder.build()
             client.newCall(request).execute().use { resp ->
-                return HttpResponse(resp.code, resp.body!!.string())
+                return HttpResponse(resp.code, resp.body!!.string(), resp.headers.toMultimap())
             }
         }
-
     }
 }

@@ -15,8 +15,12 @@ import org.slf4j.LoggerFactory
 
 
 class HttpApi {
-    object Channel {
+    object Message {
         fun create(content: String, target_id: String, type: MessageTypes = MessageTypes.TEXT, quote: String = "", temp_target_id: String = ""): JsonElement {
+            val bucket = "message/create"
+            val route = "message/create"
+            val sleepTime = RateLimit.getSleepTime(bucket)
+            Thread.sleep(sleepTime)
             val formData = FormBody.Builder()
                 .add("content", content)
                 .add("target_id", target_id)
@@ -29,10 +33,18 @@ class HttpApi {
             if (temp_target_id.isNotEmpty()) {
                 formData.add("temp_target_id", temp_target_id)
             }
-            val resp = Http.post("$api/message/create", authHeader, formData.build())
+            val resp = Http.post("$api/$route", authHeader, formData.build())
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} message/create ${respJson["message"](t.string)}")
+                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} $route ${respJson["message"](t.string)}")
+            }
+            if (resp.headers.containsKey("x-rate-limit-limit")) {
+                RateLimit.updateRateLimitInfo(
+                    bucket,
+                    resp.headers["x-rate-limit-limit"]!![0].toInt(),
+                    resp.headers["x-rate-limit-remaining"]!![0].toInt(),
+                    resp.headers["x-rate-limit-reset"]!![0].toInt()
+                )
             }
             return respJson["data"]
         }
@@ -40,10 +52,22 @@ class HttpApi {
 
     object User {
         fun me(): com.github.hank9999.infoquery.bot.types.User {
-            val resp = Http.get("$api/user/me", authHeader)
+            val bucket = "user/me"
+            val route = "user/me"
+            val sleepTime = RateLimit.getSleepTime(bucket)
+            Thread.sleep(sleepTime)
+            val resp = Http.get("$api/$route", authHeader)
             val respJson = json.parseToJsonElement(resp.body)
             if (respJson["code"](t.int) != 0) {
-                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} user/me ${respJson["message"](t.string)}")
+                throw HttpException("HttpApi ERROR ${respJson["code"](t.int)} $route ${respJson["message"](t.string)}")
+            }
+            if (resp.headers.containsKey("x-rate-limit-limit")) {
+                RateLimit.updateRateLimitInfo(
+                    bucket,
+                    resp.headers["x-rate-limit-limit"]!![0].toInt(),
+                    resp.headers["x-rate-limit-remaining"]!![0].toInt(),
+                    resp.headers["x-rate-limit-reset"]!![0].toInt()
+                )
             }
             return json.decodeFromJsonElement(respJson["data"])
         }

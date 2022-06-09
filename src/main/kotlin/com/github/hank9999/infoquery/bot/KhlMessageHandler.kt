@@ -49,7 +49,7 @@ class KhlMessageHandler {
                     newMessage += "引用消息内容: ${quote.content}"
                 }
                 logger.info(newMessage.replace("\n", "; "))
-                HttpApi.Channel.create(newMessage, data.target_id, quote = data.msg_id)
+                HttpApi.Message.create(newMessage, data.target_id, quote = data.msg_id)
             }
         }
 
