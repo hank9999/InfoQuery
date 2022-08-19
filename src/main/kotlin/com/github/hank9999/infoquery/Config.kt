@@ -17,8 +17,8 @@ class Config {
 
     object Bot {
         var token: String? = null
-        var verify_token: String? = null
-        var host: String? = "localhost"
+        var verify_token: String? = ""
+        var host: String? = ""
         var port: Int? = 3000
         var path: String? = "/webhook"
     }
@@ -52,18 +52,18 @@ class Config {
             if (Bot.token == null || Bot.token!!.isEmpty()) {
                 logger.error("配置文件错误: bot.token 不存在或为空")
                 return false
-            } else if (Bot.verify_token == null || Bot.verify_token!!.isEmpty()) {
-                logger.error("配置文件错误: bot.verify_token 不存在或为空")
-                return false
-            } else if (Bot.host == null || Bot.host!!.isEmpty()) {
-                logger.error("配置文件错误: bot.host 不存在或为空")
-                return false
-            } else if (Bot.port == null || (Bot.port!! < 0 || Bot.port!! > 65535)) {
-                logger.error("配置文件错误: bot.port 不存在或不合法")
-                return false
-            } else if (Bot.path == null || Bot.path!!.isEmpty()) {
-                logger.error("配置文件错误: bot.path 不存在或为空")
-                return false
+            }
+            if (Bot.host!!.isNotEmpty() && Bot.host != null) {
+                if (Bot.verify_token == null || Bot.verify_token!!.isEmpty()) {
+                    logger.error("配置文件错误: bot.verify_token 不存在或为空")
+                    return false
+                } else if (Bot.port == null || (Bot.port!! < 0 || Bot.port!! > 65535)) {
+                    logger.error("配置文件错误: bot.port 不存在或不合法")
+                    return false
+                } else if (Bot.path == null || Bot.path!!.isEmpty()) {
+                    logger.error("配置文件错误: bot.path 不存在或为空")
+                    return false
+                }
             }
             return true
         }
