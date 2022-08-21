@@ -1,13 +1,11 @@
 package com.github.hank9999.infoquery
 
 import com.github.hank9999.kook.Bot
-import com.github.hank9999.kook.http.HttpApi
 import com.github.hank9999.kook.types.Message
 import com.github.hank9999.kook.types.types.ChannelPrivacyTypes
 import com.github.hank9999.kook.types.types.MessageTypes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.fusesource.jansi.AnsiConsole
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,7 +14,7 @@ import kotlin.system.exitProcess
 object InfoQuery {
 
     val logger: Logger = LoggerFactory.getLogger(InfoQuery::class.java)
-    var botUserId: String = ""
+    lateinit var botUserId: String
     @JvmStatic
     fun main(args: Array<String>) {
         AnsiConsole.systemInstall()
@@ -38,9 +36,7 @@ object InfoQuery {
         } else {
             Bot(com.github.hank9999.kook.Config(token = Config.Bot.token!!))
         }
-        runBlocking {
-            botUserId = HttpApi.User.me().id
-        }
+        botUserId = bot.botUserId
         bot.registerMessageFunc(MessageTypes.KMD, ChannelPrivacyTypes.GROUP) { msg, cs -> messageHandler(msg, cs) }
     }
 
@@ -72,15 +68,21 @@ object InfoQuery {
                     newMessage = newMessage.dropLast(2) + "\n"
                 }
                 newMessage += "消息内容: $content"
+                var quoteRawMessage = ""
                 if (msg.extra.quote.rong_id.isNotEmpty()) {
                     val quote = msg.extra.quote
-                    newMessage += "\n引用消息ID: ${quote.rong_id}\n"
-                    newMessage += "引用消息发送者: ${quote.author.username}#${quote.author.identify_num}\n"
-                    newMessage += "引用消息类型: ${quote.type}\n"
-                    newMessage += "引用消息内容: ${quote.content}"
+                    newMessage += "\n引用消息ID: ${quote.rong_id}\n" +
+                            "引用消息发送者: ${quote.author.username}#${quote.author.identify_num}\n" +
+                            "引用消息类型: ${quote.type}"
+                    quoteRawMessage = "\n引用消息内容: ${quote.content}"
                 }
                 //logger.info(newMessage.replace("\n", "; "))
-                msg.reply(newMessage)
+                try {
+                    msg.reply(newMessage + quoteRawMessage)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    msg.reply(newMessage + "\n引用消息内容发送失败: ${ex.message.toString()}")
+                }
             }
         }
     }
