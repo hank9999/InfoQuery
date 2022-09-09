@@ -44,35 +44,35 @@ object InfoQuery {
         cs.launch {
             if (!msg.extra.author.bot) {
                 msg.extra.mention.find { it == botUserId} ?: return@launch
-                val messageId = msg.msg_id
-                val authorId = msg.author_id
+                val messageId = msg.msgId
+                val authorId = msg.authorId
                 val username = msg.extra.author.username
-                val guildId = msg.extra.guild_id
-                val channelId = msg.target_id
-                val channelName = msg.extra.channel_name
+                val guildId = msg.extra.guildId
+                val channelId = msg.targetId
+                val channelName = msg.extra.channelName
                 val content = msg.content
                 var newMessage =
                     "消息类型: 文字消息\n消息ID: $messageId\n发送者: $username#$authorId\n服务器: $guildId\n频道: $channelName#$channelId\n"
                 if (msg.extra.mention.isNotEmpty()) {
                     newMessage += "引用用户: "
-                    for (i in msg.extra.kmarkdown.mention_part) {
-                        newMessage += ("${i.full_name}(${i.id}), ")
+                    for (i in msg.extra.kmarkdown.mentionPart) {
+                        newMessage += ("${i.fullName}(${i.id}), ")
                     }
                     newMessage = newMessage.dropLast(2) + "\n"
                 }
-                if (msg.extra.mention_roles.isNotEmpty()) {
+                if (msg.extra.mentionRoles.isNotEmpty()) {
                     newMessage += "引用角色: "
-                    for (i in msg.extra.kmarkdown.mention_role_part) {
-                        newMessage += ("${i.name}#${i.role_id}, ")
+                    for (i in msg.extra.kmarkdown.mentionRolePart) {
+                        newMessage += ("${i.name}#${i.roleId}, ")
                     }
                     newMessage = newMessage.dropLast(2) + "\n"
                 }
                 newMessage += "消息内容: $content"
                 var quoteRawMessage = ""
-                if (msg.extra.quote.rong_id.isNotEmpty()) {
+                if (msg.extra.quote.rongId.isNotEmpty()) {
                     val quote = msg.extra.quote
-                    newMessage += "\n引用消息ID: ${quote.rong_id}\n" +
-                            "引用消息发送者: ${quote.author.username}#${quote.author.identify_num}\n" +
+                    newMessage += "\n引用消息ID: ${quote.rongId}\n" +
+                            "引用消息发送者: ${quote.author.username}#${quote.author.identifyNum}\n" +
                             "引用消息类型: ${quote.type}"
                     quoteRawMessage = "\n引用消息内容: ${quote.content}"
                 }
@@ -80,7 +80,7 @@ object InfoQuery {
                 try {
                     msg.reply(newMessage + quoteRawMessage)
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
+                    logger.error("${ex.javaClass.name} ${ex.message}\n${ex.stackTraceToString()}")
                     msg.reply(newMessage + "\n引用消息内容发送失败: ${ex.message.toString()}")
                 }
             }
