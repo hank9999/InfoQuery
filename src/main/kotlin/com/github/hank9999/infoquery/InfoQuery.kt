@@ -81,7 +81,9 @@ object InfoQuery {
                     msg.reply(newMessage + quoteRawMessage)
                 } catch (ex: Exception) {
                     logger.error("${ex.javaClass.name} ${ex.message}\n${ex.stackTraceToString()}")
-                    msg.reply(newMessage + "\n引用消息内容发送失败: ${ex.message.toString()}")
+                    try {
+                        msg.reply(newMessage + "\n引用消息内容发送失败: ${ex.message.toString()}")
+                    } catch (_: Exception) {}
                 }
             }
         }
